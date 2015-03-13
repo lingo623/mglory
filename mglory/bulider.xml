@@ -1,0 +1,31 @@
+<?xml version="1.0"?>   
+<project name="uniTrade" default="makeJar" basedir=".">   
+    <description>uniTrade jar builder</description>   
+   
+    <!-- 源文件目录 -->   
+    <property name="srcDir" value="src" />   
+    <!-- 编译后class文件目录 -->   
+    <property name="buildDir" value="bin" />   
+    <!-- jar包文件名 -->   
+    <property name="jarFileName" value="mglory.jar"/>   
+    <!-- jar包存放位置 -->   
+    <property name="jarDir" value="F:\北六\能力平台\能力平台" />   
+   
+    <!-- 删除原有jar包,如果存放jar包的文件夹不存在,将创建新的文件夹,不会覆盖原有文件夹下的文件 -->   
+    <target name="init">   
+        <tstamp />   
+        <delete file="${jarDir}/${jarFileName}" />   
+        <mkdir dir="${jarDir}" />   
+    </target>   
+   
+    <!-- 编译java文件 -->   
+    <target name="compile" depends="init">   
+        <javac srcdir="${srcDir}" destdir="${buildDir}" />   
+    </target>   
+   
+    <!-- 生成jar包 -->   
+    <target name="makeJar" depends="compile">   
+        <jar jarfile="${jarDir}/${jarFileName}" basedir="${buildDir}" excludes="log4j.properties,config.properties" />
+    </target>   
+   
+</project>  
