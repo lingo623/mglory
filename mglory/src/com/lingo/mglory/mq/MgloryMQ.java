@@ -44,6 +44,7 @@ public class MgloryMQ{
 		String value=Utils.transMapToStr(valueMap);
 		MgloryMap mgloryMap=new MgloryMap(masterGroup,slaveGroup);
 		try {
+			mgloryMap.put("topic"+"__"+topic,topic);
 			mgloryMap.put(topic+"__"+consumerId,value);
 		} catch (Exception e) {
 			throw new Exception("订阅主题:"+topic+"失败:"+e);
@@ -58,6 +59,7 @@ public class MgloryMQ{
 	public void unsubscribe(String topic)throws Exception
 	{
 		MgloryMap mgloryMap=new MgloryMap(masterGroup,slaveGroup);
+		mgloryMap.remove("topic"+"__"+topic);
 		MgloryOut mgloryOut=mgloryMap.getAllByRootKey(topic);
 		Map<String,Object> outMap=mgloryOut.getMap();
 		if (!outMap.isEmpty())

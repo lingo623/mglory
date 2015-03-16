@@ -12,16 +12,14 @@ import org.apache.commons.logging.LogFactory;
 import com.lingo.mglory.param.MgloryIn;
 import com.lingo.mglory.param.MgloryOut;
 import com.lingo.mglory.resource.ResourceHelper;
-import com.lingo.mglory.store.MgloryMap;
 import com.lingo.mglory.transport.client.Client;
 import com.lingo.mglory.util.Utils;
 
 public class MsgExecutorTask extends TimerTask{
 	private static Log log = LogFactory.getLog(MsgExecutorTask.class);
-	private String masterGroup;
-	private String slaveGroup;
 	private ConcurrentLinkedQueue<Map<String,Object>> msgQueue;
 	private ConcurrentMap<String,ConcurrentLinkedQueue<String>> haveConsumedMap;
+	private Map<String,Map<String,Object>> topicMap;
 	protected ExecutorService scheduler;
 	public void setScheduler(ExecutorService scheduler) {
 		this.scheduler = scheduler;
@@ -30,10 +28,9 @@ public class MsgExecutorTask extends TimerTask{
 	public void setMsgQueue(ConcurrentLinkedQueue<Map<String,Object>> msgQueue) {
 		this.msgQueue = msgQueue;
 	}
-	public void setCluster(String masterGroup,String slaveGroup)
+	public void setTopic(Map<String,Map<String,Object>> topicMap)
 	{
-		this.masterGroup=masterGroup;
-		this.slaveGroup=slaveGroup;
+		this.topicMap=topicMap;
 	}
 	public void setHaveConsumedMap(ConcurrentMap<String,ConcurrentLinkedQueue<String>> haveConsumedMap)
 	{
@@ -45,10 +42,8 @@ public class MsgExecutorTask extends TimerTask{
 		{
 			try {
 				String topic=msgMap.get("topic").toString();
-				MgloryMap mgloryMap=new MgloryMap(masterGroup,slaveGroup);
-				MgloryOut mgloryOut=mgloryMap.getAllByRootKey(topic);
-				Map<String,Object> outMap=mgloryOut.getMap();
-				if (outMap.isEmpty())
+				Map<String,Object> outMap=topicMap.get(topic);
+				if (outMap==null || outMap.isEmpty())
 				{
 					msgQueue.add(msgMap);
 				}
